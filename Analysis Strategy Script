@@ -1,0 +1,282 @@
+
+
+#This is the script for lecture 2
+
+2+2
+#2+2
+
+x<-7
+x
+X
+
+sqrt(x)
+sum(x,8)
+describe(x)
+install.packages("psych") #Remember - this only has to be done once!
+library(psych) #This loads the package and has to be done each time
+describe(x)
+
+getwd() #Shows where you are working from
+#setwd() #Change your working directory
+ls() #What objects are loaded?
+#rm() #Remove a specified object
+#graphics.off() #Turn off plots and graphs
+rm(list=ls()) #Gets rid of everything previously loaded
+
+install.packages("RCurl") # no need to complete this line if you've already installed the RCurl package
+library(RCurl)
+data<-getURL('https://raw.githubusercontent.com/UMhwoxhmE/MSc_QDCE_2017-18/master/Lecture%20Personality%20Data', ssl.verifyhost=F)
+data<-read.table(textConnection(data), header = T)
+library(psych)
+data
+describe(data)
+head(data)
+tail(data)
+dim(data)
+names(data)
+
+
+data[,3:4] #Columns 3:4
+data[15:20,] #Rows 15:20
+data[1,4] # Row 1, column 4
+describe(data$Warn)
+
+data2<-data[,-17] # Drops column 17
+dim(data)
+dim(data2)
+
+data2<-data2[-10,] # Drops row 10
+dim(data)
+dim(data2)
+data3<-data[-10,]
+
+data$Con<-apply(data[7:16],1,sum)
+describe(data$Con)
+
+data[data$Con<20,]
+data[data$Con>40,]
+
+Lowcon<-data[data$Con<20,]
+Highcon<-data[data$Con>40,]
+
+describe(Lowcon)
+describe(Highcon)
+
+
+##########################
+#####Lecture 4 script#####
+##########################
+##########################
+
+#Remember: Add this to your lecture 2 script to make life easier!
+install.packages("ggplot2") #Remember - this only has to be done once!
+library(ggplot2)
+describe(data)
+
+
+
+###Barplots
+
+
+data$Gendercat <- ifelse(data$Gender > 1,
+c("female"), c("male")) 
+
+data$Warncat <- ifelse(data$Warn > 0,
+c("Warned"), c("Not Warned")) 
+
+
+data$Concat[data$Con <= 20] <-"Low"
+data$Concat[data$Con >20 & data$Con <= 40] <-"Average"
+data$Concat[data$Con > 40] <-"High"
+
+describe(data)
+head(data)
+
+Barplot1<-ggplot(data,aes(Concat))
+Barplot1<-Barplot1+geom_bar()
+Barplot1
+
+Barplot1<-Barplot1+labs(title="Barplot of Conscientiousness", x ="Conscientiousness Group", y = "Count")
+Barplot1
+
+getwd()
+#ggsave("Barplot1.png", dpi=720)
+
+
+Barplot2<-ggplot(data,aes(Concat))
+Barplot2<-Barplot2+geom_bar(aes(fill=data$Warncat), position="dodge")
+Barplot2
+
+
+Barplot3<-ggplot(data,aes(Y3tutor))
+Barplot3<-Barplot3+geom_bar(aes(fill=data$Warncat), position="dodge")
+Barplot3
+
+
+
+#Histograms#
+
+
+Hist1<-ggplot(data, aes(Con), stat="count")
+Hist1<-Hist1+geom_histogram()
+Hist1
+
+
+Hist2<-ggplot(data, aes(Con, fill=data$Gendercat), stat="count")
+Hist2<-Hist2+geom_histogram()
+Hist2
+
+Hist3<-ggplot(data, aes(Con, colour=data$Gendercat), stat="count")
+Hist3<-Hist3+geom_freqpoly()
+Hist3
+
+#Boxplots#
+
+
+Boxplot1<-ggplot(data, aes(Warncat,Y3mark))
+Boxplot1<-Boxplot1+geom_boxplot()
+Boxplot1
+
+
+Boxplot2<-ggplot(data, aes(Concat,Y3mark))
+Boxplot2<-Boxplot2+geom_boxplot()
+Boxplot2
+
+
+
+
+
+
+
+#Scatterplots#
+
+Scatterplot1<-ggplot(data, aes(Y3mark,Con))
+Scatterplot1<-Scatterplot1+geom_point()
+Scatterplot1
+
+Scatterplot2<-Scatterplot1 + geom_smooth(method="lm", se=FALSE)
+Scatterplot2
+
+
+
+
+#Adding/manipulating elements of each
+
+#Adding functions into each
+
+
+
+##########################
+#####Lecture 6 script#####
+##########################
+##########################
+
+#Remember: Add this to your lecture 2 and 4 script to make life easier!
+
+install.packages("compute.es")
+library(compute.es)
+
+#####Internal consistency
+
+Conscale<-data[7:16] #Creates a dataset of only the conscientiousness items from columns 7-16
+
+psych::alpha(Conscale, check.keys=FALSE)
+
+
+#####One-sample t-test
+
+ttest1<-t.test(data$Con, mu=30)
+ttest1
+
+
+#####Two independent samples t-test
+
+ttest2<-t.test(data$Con~data$Gender)
+ttest2
+
+table(data$Gendercat) #So we can check how many males and females there are
+
+females<-data[which(data$Gendercat=="female"), ]
+describe(females)
+males<-data[which(data$Gendercat=="male"), ]
+describe(males)
+
+
+
+
+#####Paired t-test
+
+ttest3<-t.test(data$Entry, data$Y3mark)
+ttest3
+
+correlation<-cor.test(data$Y3mark,data$Entry)
+correlation
+
+
+#####One-way ANOVA
+
+anova1<-(aov(data$Y3mark~data$Concat))
+summary(anova1)
+
+pairwise.t.test(data$Y3mark,data$Concat, p.adjust.method="bonferroni")
+
+High<-data[which(data$Concat=="High"), ]
+describe(High)
+
+Average<-data[which(data$Concat=="Average"), ]
+describe(Average)
+
+
+Low<-data[which(data$Concat=="Low"), ]
+describe(Low)
+
+
+
+#####Correlation
+
+correlation<-cor.test(data$Y3mark,data$Entry)
+correlation
+
+#####Linear Regression (simple)
+
+regression1<-lm(data$Y3mark~data$Con)
+regression1
+summary(regression1)
+
+
+#####Linear Regression (multiple)
+
+regression2<-lm(data$Y3mark~data$Entry+data$Con)
+regression2
+summary(regression2)
+
+
+#####Logistic Regression (simple)
+
+regression3<-glm(data$Warn~data$Con, family=binomial)
+summary(regression3)
+
+
+exp(cbind(OR=coef(regression3,confint(regression3))))
+
+
+#####Logistic Regression (multiple)
+
+regression4<-glm(data$Warn~data$Entry+data$Con, family=binomial)
+summary(regression4)
+
+
+ORtable<-exp(cbind(OR=coef(regression4,confint(regression4))))
+ORtable
+round(ORtable[2], digits=2)
+round(ORtable[3], digits=2)
+
+
+
+
+#####Chi-square
+
+chi1<-chisq.test(table(data$Gender,data$Warn))
+chi1
+
+chies(0.18, 150)
