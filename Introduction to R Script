@@ -1,0 +1,61 @@
+#This is the script for the Introduction to R lecture
+
+2+2
+#2+2
+
+x<-7
+x
+X
+
+sqrt(x)
+sum(x,8)
+describe(x)
+install.packages("psych") #Remember - this only has to be done once!
+library(psych) #This loads the package and has to be done each time
+describe(x)
+
+getwd() #Shows where you are working from
+#setwd() #Change your working directory
+ls() #What objects are loaded?
+#rm() #Remove a specified object
+#graphics.off() #Turn off plots and graphs
+rm(list=ls()) #Gets rid of everything previously loaded
+
+install.packages("RCurl") # no need to complete this line if you've already installed the RCurl package
+library(RCurl)
+data<-getURL('https://raw.githubusercontent.com/UMhwoxhmE/MSc_QDCE_2017-18/master/Engagement%20data%202017-18.txt', ssl.verifyhost=F)
+data<-read.table(textConnection(data), header = T)
+library(psych)
+data
+describe(data)
+head(data)
+tail(data)
+dim(data)
+names(data)
+
+
+data[,3:4] #Columns 3:4
+data[15:20,] #Rows 15:20
+data[1,4] # Row 1, column 4
+describe(data$Warn)
+
+data2<-data[,-17] # Drops column 17
+dim(data)
+dim(data2)
+
+data2<-data2[-10,] # Drops row 10
+dim(data)
+dim(data2)
+data3<-data[-10,]
+
+data$Con<-apply(data[7:16],1,sum)
+describe(data$Con)
+
+data[data$Con<20,]
+data[data$Con>40,]
+
+Lowcon<-data[data$Con<20,]
+Highcon<-data[data$Con>40,]
+
+describe(Lowcon)
+describe(Highcon)
