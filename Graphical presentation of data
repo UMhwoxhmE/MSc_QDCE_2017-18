@@ -1,0 +1,165 @@
+##########################
+##########################
+#####Lecture 2 script#####
+##########################
+##########################
+
+
+2+2
+#2+2
+
+x<-7
+x
+X
+
+sqrt(x)
+sum(x,8)
+describe(x)
+install.packages("psych") #Remember - this only has to be done once!
+library(psych) #This loads the package and has to be done each time
+describe(x)
+
+getwd() #Shows where you are working from
+#setwd() #Change your working directory
+ls() #What objects are loaded?
+#rm() #Remove a specified object
+#graphics.off() #Turn off plots and graphs
+rm(list=ls()) #Gets rid of everything previously loaded
+
+install.packages("RCurl") # no need to complete this line if you've already installed the RCurl package
+library(RCurl)
+data<-getURL('https://raw.githubusercontent.com/UMhwoxhmE/MSc_QDCE_2017-18/master/Lecture%20Personality%20Data', ssl.verifyhost=F)
+data<-read.table(textConnection(data), header = T)
+library(psych)
+data
+describe(data)
+head(data)
+tail(data)
+dim(data)
+names(data)
+
+
+data[,3:4] #Columns 3:4
+data[15:20,] #Rows 15:20
+data[1,4] # Row 1, column 4
+describe(data$Warn)
+
+data2<-data[,-17] # Drops column 17
+dim(data)
+dim(data2)
+
+data2<-data2[-10,] # Drops row 10
+dim(data)
+dim(data2)
+data3<-data[-10,]
+
+data$Con<-apply(data[7:16],1,sum)
+describe(data$Con)
+
+data[data$Con<20,]
+data[data$Con>40,]
+
+Lowcon<-data[data$Con<20,]
+Highcon<-data[data$Con>40,]
+
+describe(Lowcon)
+describe(Highcon)
+
+
+
+##########################
+##########################
+#####Lecture 4 script#####
+##########################
+##########################
+
+
+install.packages("ggplot2") #Remember - this only has to be done once!
+library(ggplot2)
+describe(data)
+
+
+
+###Barplots
+
+
+data$Gendercat <- ifelse(data$Gender > 1,
+c("female"), c("male")) 
+
+data$Warncat <- ifelse(data$Warn > 0,
+c("Warned"), c("Not Warned")) 
+
+
+data$Concat[data$Con <= 20] <-"Low"
+data$Concat[data$Con >20 & data$Con <= 40] <-"Average"
+data$Concat[data$Con > 40] <-"High"
+
+describe(data)
+head(data)
+
+Barplot1<-ggplot(data,aes(Concat))
+Barplot1<-Barplot1+geom_bar()
+Barplot1
+
+Barplot1<-Barplot1+labs(title="Barplot of Conscientiousness", x ="Conscientiousness Group", y = "Count")
+Barplot1
+
+getwd()
+#ggsave("Barplot1.png", dpi=720)
+
+
+Barplot2<-ggplot(data,aes(Concat))
+Barplot2<-Barplot2+geom_bar(aes(fill=data$Warncat), position="dodge")
+Barplot2
+
+
+Barplot3<-ggplot(data,aes(Y3tutor))
+Barplot3<-Barplot3+geom_bar(aes(fill=data$Warncat), position="dodge")
+Barplot3
+
+
+
+#Histograms#
+
+
+Hist1<-ggplot(data, aes(Con), stat="count")
+Hist1<-Hist1+geom_histogram()
+Hist1
+
+
+Hist2<-ggplot(data, aes(Con, fill=data$Gendercat), stat="count")
+Hist2<-Hist2+geom_histogram()
+Hist2
+
+Hist3<-ggplot(data, aes(Con, colour=data$Gendercat), stat="count")
+Hist3<-Hist3+geom_freqpoly()
+Hist3
+
+#Boxplots#
+
+
+Boxplot1<-ggplot(data, aes(Warncat,Y3mark))
+Boxplot1<-Boxplot1+geom_boxplot()
+Boxplot1
+
+
+Boxplot2<-ggplot(data, aes(Concat,Y3mark))
+Boxplot2<-Boxplot2+geom_boxplot()
+Boxplot2
+
+
+
+
+
+
+
+#Scatterplots#
+
+Scatterplot1<-ggplot(data, aes(Y3mark,Con))
+Scatterplot1<-Scatterplot1+geom_point()
+Scatterplot1
+
+Scatterplot2<-Scatterplot1 + geom_smooth(method="lm", se=FALSE)
+Scatterplot2
+
+
