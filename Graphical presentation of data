@@ -29,7 +29,7 @@ rm(list=ls()) #Gets rid of everything previously loaded
 install.packages("RCurl") # no need to complete this line if you've already installed the RCurl package
 library(RCurl)
 data<-getURL('https://raw.githubusercontent.com/UMhwoxhmE/MSc_QDCE_2017-18/master/Lecture%20Personality%20Data', ssl.verifyhost=F)
-data<-read.table(textConnection(data), header = T)
+data<-read.table(textConnection(data), header = T, na.strings = ".")
 library(psych)
 data
 describe(data)
