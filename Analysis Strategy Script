@@ -81,7 +81,7 @@ describe(data)
 
 
 data$Gendercat <- ifelse(data$Gender > 1,
-c("female"), c("male")) 
+c("male"), c("female")) 
 
 data$Warncat <- ifelse(data$Warn > 0,
 c("Warned"), c("Not Warned")) 
